@@ -91,7 +91,7 @@ std::ostream &operator<<(std::ostream &stream, const TomaString &str) {
 }
 
 std::istream &operator>>(std::istream &stream, TomaString &str) {
-    char buffer[80];
+    char buffer[200];
     stream >> buffer;
     str = buffer;
     return stream;
