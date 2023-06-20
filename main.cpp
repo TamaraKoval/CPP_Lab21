@@ -42,7 +42,7 @@ bool getTextFromFile(TomaString &str) {
     } else {
         char ch;
         int i = 0;
-        while (!fin.eof() && i < 80) {
+        while (!fin.eof() && i < N) {
             fin.get(ch);
             if (!fin.eof() && ch != 13) {
                 str.append(ch);

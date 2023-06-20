@@ -8,11 +8,10 @@ const unsigned N = 80;
 class TomaString {
     static const char MARK = '@';
     char tomaString[N + 1]{};
-    int curMarkPos;
     char &operator[](unsigned index);
 public:
-    TomaString() { tomaString[0] = MARK; curMarkPos = 0; }
-    int length();
+    TomaString() { tomaString[0] = MARK; }
+    int length() const;
     void append(char ch);
     int search(TomaString substr);
     bool deleteSubStr(TomaString substr);

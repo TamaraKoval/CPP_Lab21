@@ -1,14 +1,18 @@
 #include "TomaString.h"
 #include <iostream>
 
-int TomaString::length() {
-    return curMarkPos;
+int TomaString::length() const {
+    int i;
+    for (i = 0; tomaString[i] != MARK; i++);
+    return i;
 }
 
 void TomaString::append(char ch) {
-    curMarkPos++;
-    tomaString[curMarkPos] = MARK;
-    tomaString[curMarkPos - 1] = ch;
+    int length = this->length();
+    if (length < N) {
+        tomaString[length] = ch;
+        tomaString[length + 1] = MARK;
+    }
 }
 
 char & TomaString::operator[](unsigned index) {
@@ -16,19 +20,21 @@ char & TomaString::operator[](unsigned index) {
 }
 
 int TomaString::search(TomaString substr) {
-    int subLength = substr.length();
     int index = -1;
-    for (int i = 0; i < curMarkPos; i++) {
+    if (tomaString[0] == MARK || substr[0] == MARK) {
+        return index;
+    }
+    for (int i = 0; tomaString[i] != MARK; i++) {
         if (tomaString[i] == substr[0]) {
             index = i;
             int j;
-            for (j = 1; j < subLength; j++) {
+            for (j = 1; substr[j] != MARK; j++) {
                 if (tomaString[i+j] != substr[j]) {
                     index = -1;
                     break;
                 }
             }
-            if (j == subLength) return index;
+            if (substr[j] == MARK) return index;
         }
     }
     return index;
@@ -39,12 +45,13 @@ bool TomaString::deleteSubStr(TomaString substr) {
         int start = search(substr);
         int subLength = substr.length();
         int i;
-        for (i = 0; start+i != curMarkPos; i++) {
-            tomaString[start+i] = tomaString[start+i+subLength];
+        for (i = 0; tomaString[start+i] != MARK; i++) {
+            tomaString[start + i] = tomaString[start + i + subLength];
         }
-        curMarkPos -= subLength;
-        for (i = curMarkPos + 1; i <= N; i++) {
-            tomaString[i] = 0;
+        tomaString[start+i] = MARK;
+
+        for (; start+i <= N; i++) {
+            tomaString[start+i] = 0;
         }
         return true;
     }
@@ -57,8 +64,7 @@ TomaString & TomaString::operator=(const char *str) {
         tomaString[i] = str[i];
     }
     tomaString[i] = MARK;
-    curMarkPos = i;
-    if (curMarkPos < N) {
+    if (i < N) {
         i++;
         for (; i <= N; i++) {
             tomaString[i] = 0;
@@ -69,12 +75,11 @@ TomaString & TomaString::operator=(const char *str) {
 
 TomaString & TomaString::operator=(TomaString str) {
     int i;
-    for (i = 0; i < str.length(); i++) {
+    for (i = 0; str[i] != MARK; i++) {
         tomaString[i] = str[i];
     }
     tomaString[i] = MARK;
-    curMarkPos = i;
-    if (curMarkPos < N) {
+    if (i < N) {
         i++;
         for (; i <= N; i++) {
             tomaString[i] = 0;
@@ -84,7 +89,8 @@ TomaString & TomaString::operator=(TomaString str) {
 }
 
 std::ostream &operator<<(std::ostream &stream, const TomaString &str) {
-    for (int i = 0; i < str.curMarkPos; i++) {
+    int length = str.length();
+    for (int i = 0; i < length; i++) {
         stream << str.tomaString[i];
     }
     return stream;
